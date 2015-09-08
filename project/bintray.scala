@@ -21,10 +21,9 @@ object Bintray extends AutoPlugin {
         c <- creds
         if c.isInstanceOf[sbt.DirectCredentials]
         val cred = c.asInstanceOf[sbt.DirectCredentials]
-        if cred.host == "api.bintray.com"
+        if cred.host == "artifactory.segmetics.com"
       } yield cred.userName -> cred.passwd
-
-    matching.headOption getOrElse sys.error("Unable to find bintray credentials (api.bintray.com)")
+    matching.headOption getOrElse sys.error("Unable to find bintray credentials (artifactory.segmetics.com)")
   }
 
   def publishContent(pkg: String, subject: String, repo: String, version: String, creds: Seq[sbt.Credentials]): Unit = {
@@ -38,28 +37,31 @@ object Bintray extends AutoPlugin {
 
   override def globalSettings: Seq[Setting[_]] =
     Seq(
-      bintrayRepoId := "sbt-plugins",
-      bintrayUserId := "jsuereth",
-      bintrayPublishToUrl := s"https://api.bintray.com/content/${bintrayUserId.value}/${bintrayRepoId.value}/"
+//      bintrayRepoId := "sbt-plugins",
+//      bintrayUserId := "jsuereth",
+//      bintrayPublishToUrl := s"https://api.bintray.com/content/${bintrayUserId.value}/${bintrayRepoId.value}/"
     )
   override def projectSettings: Seq[Setting[_]] =
     Seq(
       bintrayLayout := s"${normalizedName.value}/[revision]/${Resolver.localBasePattern}",
       publishTo := {
-        val resolver = Resolver.url("bintray-"+bintrayRepoId.value, new URL(bintrayPublishToUrl.value))(Patterns(false, bintrayLayout.value))
-        Some(resolver)
+        if(isSnapshot.value)
+          Some("snapshot" at "http://artifactory.segmetics.com/artifactory/libs-snapshot-local")
+        else
+          Some("artifactory.segmetics.com-releases" at "http://artifactory.segmetics.com/artifactory/libs-release-local")
       },
       checkBintrayCredentials := {
         val creds = credentials.value
         val (user, _) = bintrayCreds(creds)
         streams.value.log.info(s"Using $user for bintray login.")
       },
-      bintrayPublishAllStaged := {
-        val creds = credentials.value
-        // Here we need to push two different projects...
-        def push(projId: String): Unit =
-          publishContent(projId, bintrayUserId.value, bintrayRepoId.value, version.value, creds)
-        push(normalizedName.value)
-      }
+      credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+//      bintrayPublishAllStaged := {
+//        val creds = credentials.value
+//         Here we need to push two different projects...
+//        def push(projId: String): Unit =
+//          publishContent(projId, bintrayUserId.value, bintrayRepoId.value, version.value, creds)
+//        push(normalizedName.value)
+//      }
     )
 }
