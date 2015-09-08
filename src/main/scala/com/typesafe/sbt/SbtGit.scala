@@ -247,6 +247,7 @@ object SbtGit {
           version <- releaseTagVersion(tag)
         } yield version + suffix
       // NOTE - Selecting the last tag or the first tag should be an option.
+      // some change
       releaseVersions.reverse.headOption
     }
 
