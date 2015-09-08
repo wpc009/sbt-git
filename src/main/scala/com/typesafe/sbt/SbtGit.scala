@@ -126,7 +126,6 @@ object SbtGit {
     // Input task to run git commands directly.
     commands += GitCommand.command,
     gitReader in ThisProject <<= baseDirectory { (base) =>
-      println(s"gitReader -> base:$base")
       new DefaultReadableGit(base)
     },
     gitRunner := ConsoleGitRunner,
