@@ -102,6 +102,8 @@ object JGit {
     })) catch {
       // This is thrown if we never find the git base directory.  In that instance, we'll assume root is the base dir.
       case e: IllegalArgumentException =>
+        e.printStackTrace()
+        println(s"base:$base")
         val defaultGitDir = new File(base, ".git")
         new JGit({ new FileRepositoryBuilder().setGitDir(defaultGitDir).build()})
     }
