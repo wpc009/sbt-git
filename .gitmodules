@@ -1,6 +1,0 @@
-[submodule "test-project/b"]
-	path = test-project/b
-	url = /Volumes/Data/wysa/git/sbt-git/test-project/b
-[submodule "test-project/a"]
-	path = test-project/a
-	url = /Volumes/Data/wysa/git/sbt-git/test-project/a
