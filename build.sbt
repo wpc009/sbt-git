@@ -1,3 +1,6 @@
+import com.typesafe.sbt.SbtGit.GitKeys
+import com.typesafe.sbt.git.DefaultReadableGit
+
 sbtPlugin := true
 
 name := "sbt-git"
@@ -12,6 +15,8 @@ libraryDependencies += "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "3.7.0.2015
 
 publishMavenStyle := true
 
+
+GitKeys.gitReader in ThisBuild <<= baseDirectory(base => new DefaultReadableGit(base))
 
 scriptedSettings
 scriptedLaunchOpts += s"-Dproject.version=${version.value}"
