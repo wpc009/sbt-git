@@ -191,7 +191,7 @@ object SbtGit {
              releaseVersion,
              describedVersion,
              commitVersion
-          )).getOrElse(datedVersion)// For when git isn't there at all.
+          ),isSnapshot.value).getOrElse(datedVersion)// For when git isn't there at all.
         }
     )
 
@@ -253,8 +253,8 @@ object SbtGit {
 
     def overrideVersion(versionProperty: String) = Option(sys.props(versionProperty))
 
-    def makeVersion(versionPossibilities: Seq[Option[String]]): Option[String] = {
-      versionPossibilities.reduce(_ orElse _).map( v => if(isSnapshot.value) v + "-SNAPSHOT" else v)
+    def makeVersion(versionPossibilities: Seq[Option[String]],snapshot:Boolean): Option[String] = {
+      versionPossibilities.reduce(_ orElse _).map( v => if(snapshot) v + "-SNAPSHOT" else v)
     }
   }
 
