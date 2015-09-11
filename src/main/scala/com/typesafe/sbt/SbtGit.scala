@@ -157,7 +157,7 @@ object SbtGit {
   def versionWithGit: Seq[Setting[_]] =
     Seq(
         versionProperty in ThisProject := "project.version",
-        uncommittedSignifier in ThisProject := Some("SNAPSHOT"),
+        uncommittedSignifier in ThisProject := Some("DIRTY"),
         useGitDescribe in ThisProject := false,
         formattedShaVersion in ThisProject := {
           val base = git.baseVersion.?.value
@@ -254,7 +254,7 @@ object SbtGit {
     def overrideVersion(versionProperty: String) = Option(sys.props(versionProperty))
 
     def makeVersion(versionPossibilities: Seq[Option[String]]): Option[String] = {
-      versionPossibilities.reduce(_ orElse _)
+      versionPossibilities.reduce(_ orElse _).map( v => if(isSnapshot.value) v + "-SNAPSHOT" else v)
     }
   }
 
